@@ -1,22 +1,51 @@
 # Any input files on the root of the repository should be ignored
+*.265
+*.3gp
+*.7z
+*.ar
+*.avi
+*.cbz
+*.deb
+*.ear
+*.epub
+*.exe
+*.flv
+*.jar
+*.odp
+*.ods
+*.odt
+*.mkv
+*.mov
+*.mp4
+*.mpg
+*.otp
+*.ots
+*.ott
+*.tar
+*.tar.7z
+*.tar.bz2
+*.tar.gz
+*.tar.lzma
+*.tg.xz
+*.sh
+*.war
+*.wmv
+*.webm
+*.zip
+
 *input.csv
 *input*.py
 *input.py
 *input*.csv
-*INPUT.csv
-*INPUT*.py
-*INPUT.py
-*INPUT*.csv
 *password*.txt
 *password*.csv
 *tokens*.txt
 *tokes.csv
-*.tgz
-*.webm
 # Except these ones...
 !inputs_templates/LPRE/components/thrust_chamber_assembly/TCA_input_RD109.py
 
 # Also ignore folders inputs/ and outputs/
+.*/
 .inputs/
 .outputs/
 inputs/
