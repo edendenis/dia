@@ -71,6 +71,26 @@
 #     ```
 # 
 
+# ## 2. Código Red, Green e Blue (RGB) das cores
+# 
+# Segue as 10 cores mais claras com seus códigos RGB, ideais para uso em gráficos BPMN, para que o diagrama não fique muito escuro:
+# 
+# | Cor                | Red | Green | Blue |
+# |--------------------|-----|-------|------|
+# | **Azul Claro**     | 173 | 216   | 230  |
+# | **Verde Claro**    | 144 | 238   | 144  |
+# | **Rosa Claro**     | 255 | 182   | 193  |
+# | **Amarelo Claro**  | 255 | 255   | 224  |
+# | **Laranja Claro**  | 255 | 228   | 181  |
+# | **Lavanda (Roxo Claro)** | 230 | 230 | 250  |
+# | **Ciano Claro**    | 224 | 255   | 255  |
+# | **Verde Menta**    | 189 | 252   | 201  |
+# | **Pêssego**        | 255 | 218   | 185  |
+# | **Coral Claro**    | 240 | 128   | 128  |
+# 
+# Essas cores são mais suaves e garantirão que seu gráfico tenha uma aparência leve e agradável, evitando que fique muito escuro ou pesado.
+# 
+
 # ## Referências
 # 
 # [1] OPENAI. ***Instale o programa dia no ubuntu.*** Disponível em: <https://chat.openai.com/c/d9a2f2cc-d4a0-47cd-97d8-c7bf452a833c> (texto adaptado). ChatGPT. Acessado em: 29/12/2023 10:01.
