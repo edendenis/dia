@@ -1,0 +1,19 @@
+graph TD
+    A[Inicio] --> B[Definir nome do arquivo a excluir]
+    B --> C[Obter caminho da pasta raiz]
+    C --> D[Percorrer diretorios com os.walk]
+    D --> E{Arquivo e README.ipynb}
+    E -->|Sim| F[Tentar ler o notebook]
+    F --> G[Criar exportadores para MD e PY]
+    G --> H[Exportar para Markdown]
+    G --> I[Exportar para Python]
+    H --> J[Salvar .md no disco]
+    I --> K[Salvar .py no disco]
+    J --> L[Exibir sucesso]
+    K --> L
+    E -->|Nao| M{Eh o script atual}
+    M -->|Sim e nao esta na raiz| N[Deletar o arquivo]
+    M -->|Nao| O[Ignorar arquivo]
+    L --> P[Fim]
+    N --> P
+    O --> P
