@@ -1,6 +1,10 @@
-graph TD
-N0["Módulo de configuração básica."]
-N1["Func: readme()"]
-N2["Função LEIA-ME."]
-N1 --> N2
-N3["setup(name='proplib', version='0.0.2', description= 'Library of functions related to propulsion for theAPR (Propulsion Division) team.' , long_description=readme(), classifiers= 'Development Status :: 0 - Alpha', 'License :: OSI Approved :: MIT License', 'Programming Language :: Python :: 3.8', 'Topic :: Thermodynamics :: Rocket propulsion', url= 'https://gitlab.com/iae-apr/proplib', author='APR', author_email=' ', license=' ', packages='proplib', 'proplib.LPRE_lib', 'proplib.LPRE_lib.util', 'proplib.LPRE_lib.cycle', 'proplib.LPRE_lib.components', 'proplib.LPRE_lib.components.thrust_chamber_assembly', 'proplib.LPRE_lib.components.thrust_chamber_assembly', 'proplib.util', 'proplib.util.properties', 'proplib.util.software_interfaces', 'main_files', 'main_files.LPRE_main_files', python_requires='=3.4', install_requires='coolprop', 'matplotlib', 'numpy', 'pandas', 'pytest', 'scipy', 'sympy', 'Pillow', entry_points='console_scripts': 'TCA_main=main_files.LPRE_main_files.TCA_main:main', 'pump_main=main_files.LPRE_main_files.pump_main:main', 'compare_inputs=proplib.util.check_modules:compare_external', 'sign_sha1=proplib.util.check_modules:sign_sha1_external', tests_require='nose', 'pytest', include_package_data=True, zip_safe=False )"]
+flowchart TD
+start([Start])
+n1["""Módulo de configuração básica."""]
+start --> n1
+n2[function readme()]
+start --> n2
+n3["""    Função LEIA-ME.    """]
+n2 --> n3
+n5[setup(name='proplib', version='0.0.2', description=    'Library of functions related to propulsion for theAPR (Propulsion Division) team.'    , long_description=readme(), classifiers=[    'Development Status :: 0 - Alpha',    'License :: OSI Approved :: MIT License',    'Programming Language :: Python :: 3.8',    'Topic :: Thermodynamics :: Rocket propulsion'], url=    'https://gitlab.com/iae-apr/proplib', author='APR', author_email=' ',    license=' ', packages=['proplib', 'proplib.LPRE_lib',    'proplib.LPRE_lib.util', 'proplib.LPRE_lib.cycle',    'proplib.LPRE_lib.components',    'proplib.LPRE_lib.components.thrust_chamber_assembly',    'proplib.LPRE_lib.components.thrust_chamber_assembly', 'proplib.util',    'proplib.util.properties', 'proplib.util.software_interfaces',    'main_files', 'main_files.LPRE_main_files'], python_requires='>=3.4',    install_requires=['coolprop', 'matplotlib', 'numpy', 'pandas', 'pytest',    'scipy', 'sympy', 'Pillow'], entry_points={'console_scripts': [    'TCA_main=main_files.LPRE_main_files.TCA_main:main',    'pump_main=main_files.LPRE_main_files.pump_main:main',    'compare_inputs=proplib.util.check_modules:compare_external',    'sign_sha1=proplib.util.check_modules:sign_sha1_external']},    tests_require=['nose', 'pytest'], include_package_data=True, zip_safe=False    )]
+n3 --> n5

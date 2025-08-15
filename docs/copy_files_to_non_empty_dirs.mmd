@@ -1,97 +1,114 @@
-graph TD
-N0["Func: should_process_directory()"]
-N1["Verifica se o diretório deve ser processado, ignorando diretórios ocultos e .git. :param dirpath: Caminho do diretório a ser verificado :return: True se o diretório deve ser processado, False caso contrário"]
-N0 --> N1
-N2["Func: contains_readme_or_git()"]
-N3["Verifica se o diretório contém um arquivo README ou um diretório .git. :param dirpath: Caminho do diretório a ser verificado :return: True se o diretório contém README ou .git, False caso contrário"]
-N2 --> N3
-N4["For: item in os.listdir(dirpath)"]
-N2 --> N4
-N5["If: (item.lower().startswith('readme') or item == '.git')"]
-N4 --> N5
-N6["Func: copy_files_to_non_empty_dir()"]
-N7["Copia arquivos especificados para subpastas dos diretórios alvo que possuem pelo menos um arquivo README ou um diretório .git. Adiciona a data de modificação da pasta que está recebendo os arquivos ao arquivo CHANGES.txt se ele não existir. Exclui arquivos copiados para subsubpastas. :param template_dir: Diretório que contém os arquivos e pastas a serem copiados :param source_files: Lista de arquivos e/ou pastas para copiar :param target_roots: Lista de diretórios raiz onde as cópias serão feitas"]
-N6 --> N7
-N8["For: target_root in target_roots"]
-N6 --> N8
-N9["program_dirs ="]
-N8 --> N9
-N10["For: (dirpath, dirnames, filenames) in os.walk(target_root)"]
-N8 --> N10
-N11["If: should_process_directory(dirpath)"]
-N10 --> N11
-N12["If: contains_readme_or_git(dirpath)"]
-N11 --> N12
-N13["print(f Processing folder: dirpath )"]
-N12 --> N13
-N14["program_dirs.append(dirpath)"]
-N12 --> N14
-N15["For: item in source_files"]
-N12 --> N15
-N16["item_path = os.path.join(template_dir, item)"]
-N15 --> N16
-N17["target_item_path = os.path.join(dirpath, os.path.basename(item))"]
-N15 --> N17
-N18["If: os.path.isfile(item_path)"]
-N15 --> N18
-N19["If: (os.path.basename(item_path) in '.gitignore', '.gitattributes')"]
-N18 --> N19
-N20["shutil.copy(item_path, dirpath)"]
-N19 --> N20
-N21["print(f'File item copied to dirpath')"]
-N19 --> N21
-N22["If: (not os.path.exists(target_item_path))"]
-N19 --> N22
-N23["shutil.copy(item_path, dirpath)"]
-N22 --> N23
-N24["print(f'File item copied to dirpath')"]
-N22 --> N24
-N25["If: os.path.isdir(item_path)"]
-N18 --> N25
-N26["If: (not os.path.exists(target_item_path))"]
-N25 --> N26
-N27["shutil.copytree(item_path, target_item_path, dirs_exist_ok=True)"]
-N26 --> N27
-N28["print(f'Folder item copied to dirpath')"]
-N26 --> N28
-N29["update_changes_file_if_not_exists(dirpath)"]
-N12 --> N29
-N30["For: (dirpath, dirnames, filenames) in os.walk(target_root)"]
-N8 --> N30
-N31["If: (dirpath not in program_dirs and should_process_directory(dirpath))"]
-N30 --> N31
-N32["For: item in source_files"]
-N31 --> N32
-N33["item_name = os.path.basename(item)"]
-N32 --> N33
-N34["target_item_path = os.path.join(dirpath, item_name)"]
-N32 --> N34
-N35["If: (os.path.isfile(target_item_path) and not os.path.basename(target_item_path ) in '.gitignore', '.gitattributes')"]
-N32 --> N35
-N36["os.remove(target_item_path)"]
-N35 --> N36
-N37["print(f'Removed file target_item_path')"]
-N35 --> N37
-N38["If: os.path.isdir(target_item_path)"]
-N35 --> N38
-N39["shutil.rmtree(target_item_path)"]
-N38 --> N39
-N40["print(f'Removed folder target_item_path')"]
-N38 --> N40
-N41["Func: update_changes_file_if_not_exists()"]
-N42["Cria o arquivo CHANGES.txt com a data de modificação do diretório se ele não existir. :param dirpath: Diretório cujo arquivo CHANGES.txt será criado"]
-N41 --> N42
-N43["changes_file_path = os.path.join(dirpath, 'CHANGES.txt')"]
-N41 --> N43
-N44["If: (not os.path.exists(changes_file_path))"]
-N41 --> N44
-N45["mod_time = os.path.getmtime(dirpath)"]
-N44 --> N45
-N46["mod_date = datetime.fromtimestamp(mod_time).strftime('%d/%m/%Y')"]
-N44 --> N46
-N47["print(f'CHANGES.txt already exists in dirpath, not modified.')"]
-N44 --> N47
-N48["template_dir = 'TEMPLATE'"]
-N49["source_files = 'figures', '.gitattributes', '.gitignore', 'CHANGES.txt', 'copy_files_to_non_empty_dirs.py', 'convert_md_to_ipynb_and_py.py', 'convert_ipynb_to_md_and_py.py', 'LICENSE.txt'"]
-N50["target_roots = 'android', 'debian', 'mac_os', 'ubuntu'"]
-N51["copy_files_to_non_empty_dir(template_dir, source_files, target_roots)"]
+flowchart TD
+start([Start])
+n1[function should_process_directory()]
+start --> n1
+n2["""    Verifica se o diretório deve ser processado, ignorando diretórios ocultos e .git.        :param dirpath: Caminho do diretório a ser verificado    :return: True se o diretório deve ser processado, False caso contrário    """]
+n1 --> n2
+n4[function contains_readme_or_git()]
+start --> n4
+n5["""    Verifica se o diretório contém um arquivo README ou um diretório .git.        :param dirpath: Caminho do diretório a ser verificado    :return: True se o diretório contém README ou .git, False caso contrário    """]
+n4 --> n5
+n6((for (os.listdir(dirpath))))
+n5 --> n6
+n7{if ((item.lower().startswith('readme') or item == '.git'))}
+n6 --> n7
+n9[function copy_files_to_non_empty_dir()]
+start --> n9
+n10["""    Copia arquivos especificados para subpastas dos diretórios alvo que possuem pelo menos um arquivo README ou um diretório .git.    Adiciona a data de modificação da pasta que está recebendo os arquivos ao arquivo CHANGES.txt se ele não existir.    Exclui arquivos copiados para subsubpastas.        :param template_dir: Diretório que contém os arquivos e pastas a serem copiados    :param source_files: Lista de arquivos e/ou pastas para copiar    :param target_roots: Lista de diretórios raiz onde as cópias serão feitas    """]
+n9 --> n10
+n11((for (target_roots)))
+n10 --> n11
+n12[program_dirs = []]
+n11 --> n12
+n13((for (os.walk(target_root))))
+n12 --> n13
+n14{if (should_process_directory(dirpath))}
+n13 --> n14
+n15{if (contains_readme_or_git(dirpath))}
+n14 --> n15
+n16[print(f"""Processing folder: {dirpath}""")]
+n15 --> n16
+n17[program_dirs.append(dirpath)]
+n16 --> n17
+n18((for (source_files)))
+n17 --> n18
+n19[item_path = os.path.join(template_dir, item)]
+n18 --> n19
+n20[target_item_path = os.path.join(dirpath, os.path.basename(item))]
+n19 --> n20
+n21{if (os.path.isfile(item_path))}
+n20 --> n21
+n22{if ((os.path.basename(item_path) in ['.gitignore', '.gitattributes']))}
+n21 --> n22
+n23[shutil.copy(item_path, dirpath)]
+n22 --> n23
+n24[print(f'File {item} copied to {dirpath}')]
+n23 --> n24
+n25{else}
+n22 --> n25
+n26{if ((not os.path.exists(target_item_path)))}
+n25 --> n26
+n27[shutil.copy(item_path, dirpath)]
+n26 --> n27
+n28[print(f'File {item} copied to {dirpath}')]
+n27 --> n28
+n29{else}
+n26 --> n29
+n30{if (os.path.isdir(item_path))}
+n29 --> n30
+n31{if ((not os.path.exists(target_item_path)))}
+n30 --> n31
+n32[shutil.copytree(item_path, target_item_path, dirs_exist_ok=True)]
+n31 --> n32
+n33[print(f'Folder {item} copied to {dirpath}')]
+n32 --> n33
+n34[update_changes_file_if_not_exists(dirpath)]
+n33 --> n34
+n35((for (os.walk(target_root))))
+n34 --> n35
+n36{if ((dirpath not in program_dirs and should_process_directory(dirpath)))}
+n35 --> n36
+n37((for (source_files)))
+n36 --> n37
+n38[item_name = os.path.basename(item)]
+n37 --> n38
+n39[target_item_path = os.path.join(dirpath, item_name)]
+n38 --> n39
+n40{if ((os.path.isfile(target_item_path) and not os.path.basename(target_item_path    ) in ['.gitignore', '.gitattributes']))}
+n39 --> n40
+n41[os.remove(target_item_path)]
+n40 --> n41
+n42[print(f'Removed file {target_item_path}')]
+n41 --> n42
+n43{else}
+n40 --> n43
+n44{if (os.path.isdir(target_item_path))}
+n43 --> n44
+n45[shutil.rmtree(target_item_path)]
+n44 --> n45
+n46[print(f'Removed folder {target_item_path}')]
+n45 --> n46
+n48[function update_changes_file_if_not_exists()]
+start --> n48
+n49["""    Cria o arquivo CHANGES.txt com a data de modificação do diretório se ele não existir.        :param dirpath: Diretório cujo arquivo CHANGES.txt será criado    """]
+n48 --> n49
+n50[changes_file_path = os.path.join(dirpath, 'CHANGES.txt')]
+n49 --> n50
+n51{if ((not os.path.exists(changes_file_path)))}
+n50 --> n51
+n52[mod_time = os.path.getmtime(dirpath)]
+n51 --> n52
+n53[mod_date = datetime.fromtimestamp(mod_time).strftime('%d/%m/%Y')]
+n52 --> n53
+n54{else}
+n51 --> n54
+n55[print(f'CHANGES.txt already exists in {dirpath}, not modified.')]
+n54 --> n55
+n57[template_dir = 'TEMPLATE']
+n55 --> n57
+n58[source_files = ['figures', '.gitattributes', '.gitignore', 'CHANGES.txt',    'copy_files_to_non_empty_dirs.py', 'convert_md_to_ipynb_and_py.py',    'convert_ipynb_to_md_and_py.py', 'LICENSE.txt']]
+n57 --> n58
+n59[target_roots = ['android', 'debian', 'mac_os', 'ubuntu']]
+n58 --> n59
+n60[copy_files_to_non_empty_dir(template_dir, source_files, target_roots)]
+n59 --> n60

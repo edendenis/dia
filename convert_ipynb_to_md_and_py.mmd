@@ -1,16 +1,22 @@
-graph TD
-N0["excluded_file = 'convert_ipynb_to_md.ipynb'"]
-N1["root_path = os.path.abspath('.')"]
-N2["For: (dirpath, dirnames, filenames) in os.walk('.')"]
-N3["For: filename in filenames"]
-N2 --> N3
-N4["full_path = os.path.join(dirpath, filename)"]
-N3 --> N4
-N5["If: (filename == 'README.ipynb')"]
-N3 --> N5
-N6["If: (filename == excluded_file and os.path.abspath(dirpath) != root_path)"]
-N5 --> N6
-N7["os.remove(full_path)"]
-N6 --> N7
-N8["print(f'Deleted file: full_path')"]
-N6 --> N8
+flowchart TD
+start([Start])
+n1[excluded_file = 'convert_ipynb_to_md.ipynb']
+start --> n1
+n2[root_path = os.path.abspath('.')]
+n1 --> n2
+n3((for (os.walk('.'))))
+n2 --> n3
+n4((for (filenames)))
+n3 --> n4
+n5[full_path = os.path.join(dirpath, filename)]
+n4 --> n5
+n6{if ((filename == 'README.ipynb'))}
+n5 --> n6
+n7{else}
+n6 --> n7
+n8{if ((filename == excluded_file and os.path.abspath(dirpath) != root_path))}
+n7 --> n8
+n9[os.remove(full_path)]
+n8 --> n9
+n10[print(f'Deleted file: {full_path}')]
+n9 --> n10

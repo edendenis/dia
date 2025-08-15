@@ -1,8 +1,12 @@
-graph TD
-N0["nb = json.load(sys.stdin)"]
-N1["For: cell in nb'cells'"]
-N2["If: ('metadata' in cell)"]
-N1 --> N2
-N3["cell'metadata' = k: v for k, v in cell'metadata'.items() if k != 'jp-MarkdownHeadingCollapsed'"]
-N2 --> N3
-N4["json.dump(nb, sys.stdout, sort_keys=True, indent=1, ensure_ascii=False)"]
+flowchart TD
+start([Start])
+n1[nb = json.load(sys.stdin)]
+start --> n1
+n2((for (nb['cells'])))
+n1 --> n2
+n3{if (('metadata' in cell))}
+n2 --> n3
+n4[cell['metadata'] = {k: v for k, v in cell['metadata'].items() if k !=    'jp-MarkdownHeadingCollapsed'}]
+n3 --> n4
+n5[json.dump(nb, sys.stdout, sort_keys=True, indent=1, ensure_ascii=False)]
+n4 --> n5
