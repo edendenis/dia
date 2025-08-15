@@ -1,89 +1,125 @@
 # -*- coding: utf-8 -*-
-
-import os
 import ast
-import re
 import astor
+import re
+import os
 from pathlib import Path
+import subprocess
 
-
-def clean_identifier(text):
+def clean_label(label):
     """
-    Remove ou substitui caracteres especiais para compatibilidade com Mermaid.
+    Remove caracteres especiais e simplifica labels.
     """
-    text = re.sub(r"[^\w]", "_", text)  # Mantém apenas letras, números e _
-    return text
+    label = re.sub(r"[^\w\s:=><\-\+\*/]", "", label)
+    label = re.sub(r"\s+", " ", label)
+    return label.strip()
 
+def generate_mermaid_from_ast(code_str):
+    """
+    Gera código Mermaid flowchart a partir de código Python.
+    """
+    tree = ast.parse(code_str)
+    lines = ["flowchart TD"]
+    node_counter = 0
 
-def parse_python_file(filepath):
-    """Analisa um arquivo Python e retorna seu AST"""
-    with open(filepath, "r", encoding="utf-8") as file:
-        return ast.parse(file.read())
+    def new_node(label, shape="rect"):
+        nonlocal node_counter
+        node_id = f"n{node_counter}"
+        label = clean_label(label)
+        if shape == "diamond":
+            lines.append(f'{node_id}{{"{label}"}}')
+        elif shape == "parallelogram":
+            lines.append(f'{node_id}[/"{label}"/]')
+        else:
+            lines.append(f'{node_id}["{label}"]')
+        node_counter += 1
+        return node_id
 
-
-def get_function_and_class_defs(tree):
-    """Extrai funções e classes do AST"""
-    elements = []
-
-    for node in ast.walk(tree):
+    def walk(node, parent=None):
         if isinstance(node, ast.FunctionDef):
-            elements.append(("function", node.name))
-        elif isinstance(node, ast.ClassDef):
-            elements.append(("class", node.name))
+            current = new_node(f"Func: {node.name}()", "rect")
+            if parent:
+                lines.append(f"{parent} --> {current}")
+            last = current
+            for stmt in node.body:
+                last = walk(stmt, last)
+            return current
 
-    return elements
+        elif isinstance(node, ast.If):
+            cond = new_node(f"If: {astor.to_source(node.test).strip()}", "diamond")
+            if parent:
+                lines.append(f"{parent} --> {cond}")
+            last_true = cond
+            for stmt in node.body:
+                last_true = walk(stmt, cond)
+            last_false = cond
+            for stmt in node.orelse:
+                last_false = walk(stmt, cond)
+            return cond
 
+        elif isinstance(node, ast.While):
+            cond = new_node(f"While: {astor.to_source(node.test).strip()}", "diamond")
+            if parent:
+                lines.append(f"{parent} --> {cond}")
+            for stmt in node.body:
+                walk(stmt, cond)
+            return cond
 
-def generate_mermaid_code(elements, filename):
-    """Gera código Mermaid a partir das definições encontradas"""
-    clean_name = clean_identifier(filename)
-    lines = [f"classDiagram", f"class {clean_name} {{"]
+        elif isinstance(node, ast.For):
+            label = f"For: {astor.to_source(node.target).strip()} in {astor.to_source(node.iter).strip()}"
+            loop = new_node(label, "diamond")
+            if parent:
+                lines.append(f"{parent} --> {loop}")
+            for stmt in node.body:
+                walk(stmt, loop)
+            return loop
 
-    for element_type, name in elements:
-        name = clean_identifier(name)
-        prefix = "+" if element_type == "function" else "#"
-        lines.append(f"    {prefix}{name}()")
+        elif isinstance(node, ast.Assign):
+            assign = new_node(astor.to_source(node).strip(), "rect")
+            if parent:
+                lines.append(f"{parent} --> {assign}")
+            return assign
 
-    lines.append("}")
+        elif isinstance(node, ast.Expr):
+            expr = new_node(astor.to_source(node).strip(), "rect")
+            if parent:
+                lines.append(f"{parent} --> {expr}")
+            return expr
+
+        return parent
+
+    for n in tree.body:
+        walk(n)
+
     return "\n".join(lines)
-
-
-def write_mermaid_file(mermaid_code, output_path):
-    """Escreve o arquivo .mmd"""
-    with open(output_path, "w", encoding="utf-8") as file:
-        file.write(mermaid_code)
-
-
-def convert_to_svg(mmd_path, svg_path):
-    """Chama o mermaid-cli para converter .mmd em .svg"""
-    os.system(f"mmdc -i \"{mmd_path}\" -o \"{svg_path}\" --quiet")
 
 
 def process_python_file(file_path):
     print(f"📄 Processando: {file_path}")
     try:
-        tree = parse_python_file(file_path)
-        elements = get_function_and_class_defs(tree)
-        if not elements:
+        with open(file_path, "r", encoding="utf-8") as f:
+            code = f.read()
+
+        mermaid_code = generate_mermaid_from_ast(code)
+
+        if mermaid_code.strip() == "flowchart TD":
             print(f"⚠️ Nenhum elemento detectado em {file_path}, pulando.")
             return
-
-        filename = Path(file_path).stem
-        mermaid_code = generate_mermaid_code(elements, filename)
 
         mmd_path = f"{file_path}.mmd"
         svg_path = f"{file_path}.svg"
 
-        write_mermaid_file(mermaid_code, mmd_path)
+        with open(mmd_path, "w", encoding="utf-8") as f:
+            f.write(mermaid_code)
+
         print("Generating single mermaid chart")
-        convert_to_svg(mmd_path, svg_path)
+        subprocess.run(["mmdc", "-i", mmd_path, "-o", svg_path, "--quiet"], check=True)
         print(f"✅ SVG gerado: {svg_path}")
     except Exception as e:
         print(f"❌ Erro ao processar {file_path}: {e}")
 
 
 def find_python_files(root="."):
-    """Busca todos os arquivos .py recursivamente"""
     py_files = []
     for dirpath, _, filenames in os.walk(root):
         for file in filenames:

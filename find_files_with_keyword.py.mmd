@@ -1,4 +1,21 @@
-classDiagram
-class find_files_with_keyword {
-    +find_files_with_keyword()
-}
+flowchart TD
+n0["Func: find_files_with_keyword"]
+n1["Percorre os arquivos py de um diretório e retorna uma lista dos arquivos que contêm a palavra-chave especificada :param directory: Caminho do diretório a ser percorrido :type directory: str :param keyword: Palavra-chave a ser procurada nos arquivos :type keyword: str :return: Lista de caminhos dos arquivos que contêm a palavra-chave :rtype: list"]
+n0 --> n1
+n2["matching_files ="]
+n1 --> n2
+n3{"For: root _ files in oswalkdirectory"}
+n2 --> n3
+n4{"For: file in files"}
+n3 --> n4
+n5{"If: fileendswithpy"}
+n4 --> n5
+n6["file_path = ospathjoinroot file"]
+n5 --> n6
+n7["project_root_directory = ospathdirnameospathabspath__file__"]
+n8["keyword_to_find = inputPlease enter the keyword to search for:"]
+n9["files_found = find_files_with_keywordproject_root_directory keyword_to_find"]
+n10["printfFiles containing the word keyword_to_find:"]
+n11{"For: file in files_found"}
+n12["printffile://file"]
+n11 --> n12

@@ -1,3 +1,8 @@
-classDiagram
-class "filter_nb_metadata" {
-}
+flowchart TD
+n0["nb = jsonloadsysstdin"]
+n1{"For: cell in nbcells"}
+n2{"If: metadata in cell"}
+n1 --> n2
+n3["cellmetadata = k: v for k v in cellmetadataitems if k = jp-MarkdownHeadingCollapsed"]
+n2 --> n3
+n4["jsondumpnb sysstdout sort_keys=True indent=1 ensure_ascii=False"]

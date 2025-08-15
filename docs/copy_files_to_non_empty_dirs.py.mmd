@@ -1,7 +1,97 @@
-classDiagram
-class copy_files_to_non_empty_dirs {
-    +should_process_directory()
-    +contains_readme_or_git()
-    +copy_files_to_non_empty_dir()
-    +update_changes_file_if_not_exists()
-}
+flowchart TD
+n0["Func: should_process_directory"]
+n1["Verifica se o diretório deve ser processado ignorando diretórios ocultos e git :param dirpath: Caminho do diretório a ser verificado :return: True se o diretório deve ser processado False caso contrário"]
+n0 --> n1
+n2["Func: contains_readme_or_git"]
+n3["Verifica se o diretório contém um arquivo README ou um diretório git :param dirpath: Caminho do diretório a ser verificado :return: True se o diretório contém README ou git False caso contrário"]
+n2 --> n3
+n4{"For: item in oslistdirdirpath"}
+n3 --> n4
+n5{"If: itemlowerstartswithreadme or item == git"}
+n4 --> n5
+n6["Func: copy_files_to_non_empty_dir"]
+n7["Copia arquivos especificados para subpastas dos diretórios alvo que possuem pelo menos um arquivo README ou um diretório git Adiciona a data de modificação da pasta que está recebendo os arquivos ao arquivo CHANGEStxt se ele não existir Exclui arquivos copiados para subsubpastas :param template_dir: Diretório que contém os arquivos e pastas a serem copiados :param source_files: Lista de arquivos e/ou pastas para copiar :param target_roots: Lista de diretórios raiz onde as cópias serão feitas"]
+n6 --> n7
+n8{"For: target_root in target_roots"}
+n7 --> n8
+n9["program_dirs ="]
+n8 --> n9
+n10{"For: dirpath dirnames filenames in oswalktarget_root"}
+n8 --> n10
+n11{"If: should_process_directorydirpath"}
+n10 --> n11
+n12{"If: contains_readme_or_gitdirpath"}
+n11 --> n12
+n13["printf Processing folder: dirpath"]
+n12 --> n13
+n14["program_dirsappenddirpath"]
+n12 --> n14
+n15{"For: item in source_files"}
+n12 --> n15
+n16["item_path = ospathjointemplate_dir item"]
+n15 --> n16
+n17["target_item_path = ospathjoindirpath ospathbasenameitem"]
+n15 --> n17
+n18{"If: ospathisfileitem_path"}
+n15 --> n18
+n19{"If: ospathbasenameitem_path in gitignore gitattributes"}
+n18 --> n19
+n20["shutilcopyitem_path dirpath"]
+n19 --> n20
+n21["printfFile item copied to dirpath"]
+n19 --> n21
+n22{"If: not ospathexiststarget_item_path"}
+n19 --> n22
+n23["shutilcopyitem_path dirpath"]
+n22 --> n23
+n24["printfFile item copied to dirpath"]
+n22 --> n24
+n25{"If: ospathisdiritem_path"}
+n18 --> n25
+n26{"If: not ospathexiststarget_item_path"}
+n25 --> n26
+n27["shutilcopytreeitem_path target_item_path dirs_exist_ok=True"]
+n26 --> n27
+n28["printfFolder item copied to dirpath"]
+n26 --> n28
+n29["update_changes_file_if_not_existsdirpath"]
+n12 --> n29
+n30{"For: dirpath dirnames filenames in oswalktarget_root"}
+n8 --> n30
+n31{"If: dirpath not in program_dirs and should_process_directorydirpath"}
+n30 --> n31
+n32{"For: item in source_files"}
+n31 --> n32
+n33["item_name = ospathbasenameitem"]
+n32 --> n33
+n34["target_item_path = ospathjoindirpath item_name"]
+n32 --> n34
+n35{"If: ospathisfiletarget_item_path and not ospathbasenametarget_item_path in gitignore gitattributes"}
+n32 --> n35
+n36["osremovetarget_item_path"]
+n35 --> n36
+n37["printfRemoved file target_item_path"]
+n35 --> n37
+n38{"If: ospathisdirtarget_item_path"}
+n35 --> n38
+n39["shutilrmtreetarget_item_path"]
+n38 --> n39
+n40["printfRemoved folder target_item_path"]
+n38 --> n40
+n41["Func: update_changes_file_if_not_exists"]
+n42["Cria o arquivo CHANGEStxt com a data de modificação do diretório se ele não existir :param dirpath: Diretório cujo arquivo CHANGEStxt será criado"]
+n41 --> n42
+n43["changes_file_path = ospathjoindirpath CHANGEStxt"]
+n42 --> n43
+n44{"If: not ospathexistschanges_file_path"}
+n43 --> n44
+n45["mod_time = ospathgetmtimedirpath"]
+n44 --> n45
+n46["mod_date = datetimefromtimestampmod_timestrftimed/m/Y"]
+n44 --> n46
+n47["printfCHANGEStxt already exists in dirpath not modified"]
+n44 --> n47
+n48["template_dir = TEMPLATE"]
+n49["source_files = figures gitattributes gitignore CHANGEStxt copy_files_to_non_empty_dirspy convert_md_to_ipynb_and_pypy convert_ipynb_to_md_and_pypy LICENSEtxt"]
+n50["target_roots = android debian mac_os ubuntu"]
+n51["copy_files_to_non_empty_dirtemplate_dir source_files target_roots"]

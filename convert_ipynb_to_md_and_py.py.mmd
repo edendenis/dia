@@ -1,3 +1,16 @@
-classDiagram
-class "convert_ipynb_to_md_and_py" {
-}
+flowchart TD
+n0["excluded_file = convert_ipynb_to_mdipynb"]
+n1["root_path = ospathabspath"]
+n2{"For: dirpath dirnames filenames in oswalk"}
+n3{"For: filename in filenames"}
+n2 --> n3
+n4["full_path = ospathjoindirpath filename"]
+n3 --> n4
+n5{"If: filename == READMEipynb"}
+n3 --> n5
+n6{"If: filename == excluded_file and ospathabspathdirpath = root_path"}
+n5 --> n6
+n7["osremovefull_path"]
+n6 --> n7
+n8["printfDeleted file: full_path"]
+n6 --> n8
