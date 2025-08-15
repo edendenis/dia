@@ -6,27 +6,28 @@ import subprocess
 import os
 
 def clean_label(label):
-    """
-    Remove ou substitui caracteres especiais para compatibilidade com Mermaid.
-    """
-    label = re.sub(r"[{}\"\\\[\]<>]", "", label)  # Remove caracteres problemáticos
-    label = re.sub(r"\s+", " ", label)            # Colapsa espaços múltiplos
+    """Remove caracteres problemáticos e espaços extras."""
+    label = re.sub(r"[{}\"\\\[\]<>]", "", label)
+    label = re.sub(r"\s+", " ", label)
     return label.strip()
 
 def extract_mermaid_from_python_code(code_str):
     """
-    Gera um fluxograma Mermaid simples a partir de um código Python.
+    Gera fluxograma Mermaid com setas 'Sim' e 'Não' para decisões e loops.
     """
     tree = ast.parse(code_str)
     mermaid = ["graph TD"]
     node_counter = 0
 
-    def new_node(label):
+    def new_node(label, shape="rect"):
         nonlocal node_counter
         label = clean_label(label)
         node_id = f"N{node_counter}"
         node_counter += 1
-        mermaid.append(f'{node_id}["{label}"]')
+        if shape == "diamond":
+            mermaid.append(f'{node_id}{{"{label}"}}')
+        else:
+            mermaid.append(f'{node_id}["{label}"]')
         return node_id
 
     def walk(node, parent=None):
@@ -39,44 +40,51 @@ def extract_mermaid_from_python_code(code_str):
             return curr
 
         elif isinstance(node, ast.If):
-            cond = new_node(f"If: {astor.to_source(node.test).strip()}")
+            cond = new_node(f"If: {astor.to_source(node.test).strip()}", "diamond")
+            if parent:
+                mermaid.append(f"{parent} --> {cond}")
+            # Caminho "Sim"
+            last_true = cond
+            for stmt in node.body:
+                true_node = walk(stmt, last_true)
+                mermaid.append(f"{cond} -->|Sim| {true_node}")
+            # Caminho "Não"
+            if node.orelse:
+                for stmt in node.orelse:
+                    false_node = walk(stmt, cond)
+                    mermaid.append(f"{cond} -->|Não| {false_node}")
+            return cond
+
+        elif isinstance(node, ast.While):
+            cond = new_node(f"While: {astor.to_source(node.test).strip()}", "diamond")
             if parent:
                 mermaid.append(f"{parent} --> {cond}")
             for stmt in node.body:
-                walk(stmt, cond)
-            for stmt in node.orelse:
-                walk(stmt, cond)
+                loop_node = walk(stmt, cond)
+                mermaid.append(f"{cond} -->|Sim| {loop_node}")
+            mermaid.append(f"{cond} -->|Não| {cond}_end")
+            mermaid.append(f'{cond}_end["Fim While"]')
             return cond
 
         elif isinstance(node, ast.For):
-            target = astor.to_source(node.target).strip()
-            it = astor.to_source(node.iter).strip()
-            loop = new_node(f"For: {target} in {it}")
+            cond = new_node(f"For: {astor.to_source(node.target).strip()} in {astor.to_source(node.iter).strip()}", "diamond")
             if parent:
-                mermaid.append(f"{parent} --> {loop}")
+                mermaid.append(f"{parent} --> {cond}")
             for stmt in node.body:
-                walk(stmt, loop)
-            return loop
-
-        elif isinstance(node, ast.While):
-            test = astor.to_source(node.test).strip()
-            loop = new_node(f"While: {test}")
-            if parent:
-                mermaid.append(f"{parent} --> {loop}")
-            for stmt in node.body:
-                walk(stmt, loop)
-            return loop
+                loop_node = walk(stmt, cond)
+                mermaid.append(f"{cond} -->|Sim| {loop_node}")
+            mermaid.append(f"{cond} -->|Não| {cond}_end")
+            mermaid.append(f'{cond}_end["Fim For"]')
+            return cond
 
         elif isinstance(node, ast.Expr):
-            label = astor.to_source(node).strip()
-            expr = new_node(label)
+            expr = new_node(astor.to_source(node).strip())
             if parent:
                 mermaid.append(f"{parent} --> {expr}")
             return expr
 
         elif isinstance(node, ast.Assign):
-            label = astor.to_source(node).strip()
-            assign = new_node(label)
+            assign = new_node(astor.to_source(node).strip())
             if parent:
                 mermaid.append(f"{parent} --> {assign}")
             return assign
@@ -89,15 +97,11 @@ def extract_mermaid_from_python_code(code_str):
     return "\n".join(mermaid)
 
 def process_all_py_files():
-    """
-    Busca todos os arquivos .py a partir da raiz e gera um .mmd e .svg para cada um.
-    """
+    """Busca todos os arquivos .py e gera .mmd e .svg."""
     for dirpath, _, filenames in os.walk('.'):
         for filename in filenames:
             if filename.endswith('.py'):
                 full_path = os.path.join(dirpath, filename)
-
-                # Lê o código-fonte
                 with open(full_path, 'r', encoding='utf-8') as f:
                     try:
                         code = f.read()
@@ -106,21 +110,15 @@ def process_all_py_files():
                         print(f"❌ Erro ao processar {full_path}: {e}")
                         continue
 
-                base_name = os.path.splitext(filename)[0]
-                mmd_path = os.path.join(dirpath, f"{base_name}.mmd")
-                svg_path = os.path.join(dirpath, f"{base_name}.svg")
+                mmd_path = os.path.join(dirpath, f"{os.path.splitext(filename)[0]}.mmd")
+                svg_path = os.path.join(dirpath, f"{os.path.splitext(filename)[0]}.svg")
 
-                # Escreve o arquivo .mmd
                 with open(mmd_path, 'w', encoding='utf-8') as f:
                     f.write(mermaid_code)
                 print(f"✔️ {mmd_path} gerado.")
 
-                # Tenta gerar o .svg com o mmdc
                 try:
-                    subprocess.run(
-                        ["mmdc", "-i", mmd_path, "-o", svg_path],
-                        check=True
-                    )
+                    subprocess.run(["mmdc", "-i", mmd_path, "-o", svg_path], check=True)
                     print(f"✅ SVG salvo: {svg_path}")
                 except subprocess.CalledProcessError as e:
                     print(f"❌ Falha ao gerar SVG para {mmd_path}: {e}")

@@ -1,13 +1,13 @@
 flowchart TD
 n0["Func: clean_label"]
-n1["Remove ou substitui caracteres especiais para compatibilidade com Mermaid"]
+n1["Remove caracteres problemáticos e espaços extras"]
 n0 --> n1
 n2["label = resub<> label"]
 n1 --> n2
 n3["label = resubs+ label"]
 n2 --> n3
 n4["Func: extract_mermaid_from_python_code"]
-n5["Gera um fluxograma Mermaid simples a partir de um código Python"]
+n5["Gera fluxograma Mermaid com setas Sim e Não para decisões e loops"]
 n4 --> n5
 n6["tree = astparsecode_str"]
 n5 --> n6
@@ -21,111 +21,123 @@ n10["label = clean_labellabel"]
 n9 --> n10
 n11["node_id = fNnode_counter"]
 n10 --> n11
-n12["mermaidappendfnode_idlabel"]
+n12{"If: shape == diamond"}
 n11 --> n12
-n13["Func: walk"]
-n9 --> n13
-n14{"If: isinstancenode astFunctionDef"}
-n13 --> n14
-n15["curr = new_nodefFunc: nodename"]
-n14 --> n15
-n16{"If: parent"}
-n14 --> n16
-n17["mermaidappendfparent --> curr"]
+n13["mermaidappendfnode_idlabel"]
+n12 --> n13
+n14["mermaidappendfnode_idlabel"]
+n12 --> n14
+n15["Func: walk"]
+n9 --> n15
+n16{"If: isinstancenode astFunctionDef"}
+n15 --> n16
+n17["curr = new_nodefFunc: nodename"]
 n16 --> n17
-n18{"For: stmt in nodebody"}
-n14 --> n18
-n19["walkstmt curr"]
+n18{"If: parent"}
+n16 --> n18
+n19["mermaidappendfparent --> curr"]
 n18 --> n19
-n20{"If: isinstancenode astIf"}
-n14 --> n20
-n21["cond = new_nodefIf: astorto_sourcenodeteststrip"]
+n20{"For: stmt in nodebody"}
+n16 --> n20
+n21["walkstmt curr"]
 n20 --> n21
-n22{"If: parent"}
-n20 --> n22
-n23["mermaidappendfparent --> cond"]
+n22{"If: isinstancenode astIf"}
+n16 --> n22
+n23["cond = new_nodefIf: astorto_sourcenodeteststrip diamond"]
 n22 --> n23
-n24{"For: stmt in nodebody"}
-n20 --> n24
-n25["walkstmt cond"]
+n24{"If: parent"}
+n22 --> n24
+n25["mermaidappendfparent --> cond"]
 n24 --> n25
-n26{"For: stmt in nodeorelse"}
-n20 --> n26
-n27["walkstmt cond"]
-n26 --> n27
-n28{"If: isinstancenode astFor"}
-n20 --> n28
-n29["target = astorto_sourcenodetargetstrip"]
-n28 --> n29
-n30["it = astorto_sourcenodeiterstrip"]
-n28 --> n30
-n31["loop = new_nodefFor: target in it"]
-n28 --> n31
-n32{"If: parent"}
-n28 --> n32
-n33["mermaidappendfparent --> loop"]
-n32 --> n33
-n34{"For: stmt in nodebody"}
-n28 --> n34
-n35["walkstmt loop"]
+n26["last_true = cond"]
+n22 --> n26
+n27{"For: stmt in nodebody"}
+n22 --> n27
+n28["true_node = walkstmt last_true"]
+n27 --> n28
+n29["mermaidappendfcond -->Sim true_node"]
+n27 --> n29
+n30{"If: nodeorelse"}
+n22 --> n30
+n31{"For: stmt in nodeorelse"}
+n30 --> n31
+n32["false_node = walkstmt cond"]
+n31 --> n32
+n33["mermaidappendfcond -->Não false_node"]
+n31 --> n33
+n34{"If: isinstancenode astWhile"}
+n22 --> n34
+n35["cond = new_nodefWhile: astorto_sourcenodeteststrip diamond"]
 n34 --> n35
-n36{"If: isinstancenode astWhile"}
-n28 --> n36
-n37["test = astorto_sourcenodeteststrip"]
+n36{"If: parent"}
+n34 --> n36
+n37["mermaidappendfparent --> cond"]
 n36 --> n37
-n38["loop = new_nodefWhile: test"]
-n36 --> n38
-n39{"If: parent"}
-n36 --> n39
-n40["mermaidappendfparent --> loop"]
-n39 --> n40
-n41{"For: stmt in nodebody"}
-n36 --> n41
-n42["walkstmt loop"]
-n41 --> n42
-n43{"If: isinstancenode astExpr"}
-n36 --> n43
-n44["label = astorto_sourcenodestrip"]
+n38{"For: stmt in nodebody"}
+n34 --> n38
+n39["loop_node = walkstmt cond"]
+n38 --> n39
+n40["mermaidappendfcond -->Sim loop_node"]
+n38 --> n40
+n41["mermaidappendfcond -->Não cond_end"]
+n34 --> n41
+n42["mermaidappendfcond_endFim While"]
+n34 --> n42
+n43{"If: isinstancenode astFor"}
+n34 --> n43
+n44["cond = new_node fFor: astorto_sourcenodetargetstrip in astorto_sourcenodeiterstrip diamond"]
 n43 --> n44
-n45["expr = new_nodelabel"]
+n45{"If: parent"}
 n43 --> n45
-n46{"If: parent"}
-n43 --> n46
-n47["mermaidappendfparent --> expr"]
-n46 --> n47
-n48{"If: isinstancenode astAssign"}
-n43 --> n48
-n49["label = astorto_sourcenodestrip"]
-n48 --> n49
-n50["assign = new_nodelabel"]
-n48 --> n50
-n51{"If: parent"}
-n48 --> n51
-n52["mermaidappendfparent --> assign"]
-n51 --> n52
-n53{"For: n in treebody"}
-n13 --> n53
-n54["walkn"]
-n53 --> n54
-n55["Func: process_all_py_files"]
-n56["Busca todos os arquivos py a partir da raiz e gera um mmd e svg para cada um"]
-n55 --> n56
-n57{"For: dirpath _ filenames in oswalk"}
+n46["mermaidappendfparent --> cond"]
+n45 --> n46
+n47{"For: stmt in nodebody"}
+n43 --> n47
+n48["loop_node = walkstmt cond"]
+n47 --> n48
+n49["mermaidappendfcond -->Sim loop_node"]
+n47 --> n49
+n50["mermaidappendfcond -->Não cond_end"]
+n43 --> n50
+n51["mermaidappendfcond_endFim For"]
+n43 --> n51
+n52{"If: isinstancenode astExpr"}
+n43 --> n52
+n53["expr = new_nodeastorto_sourcenodestrip"]
+n52 --> n53
+n54{"If: parent"}
+n52 --> n54
+n55["mermaidappendfparent --> expr"]
+n54 --> n55
+n56{"If: isinstancenode astAssign"}
+n52 --> n56
+n57["assign = new_nodeastorto_sourcenodestrip"]
 n56 --> n57
-n58{"For: filename in filenames"}
-n57 --> n58
-n59{"If: filenameendswithpy"}
+n58{"If: parent"}
+n56 --> n58
+n59["mermaidappendfparent --> assign"]
 n58 --> n59
-n60["full_path = ospathjoindirpath filename"]
-n59 --> n60
-n61["base_name = ospathsplitextfilename0"]
-n59 --> n61
-n62["mmd_path = ospathjoindirpath fbase_namemmd"]
-n59 --> n62
-n63["svg_path = ospathjoindirpath fbase_namesvg"]
-n59 --> n63
-n64["printf mmd_path gerado"]
-n59 --> n64
-n65{"If: __name__ == __main__"}
-n66["process_all_py_files"]
+n60{"For: n in treebody"}
+n15 --> n60
+n61["walkn"]
+n60 --> n61
+n62["Func: process_all_py_files"]
+n63["Busca todos os arquivos py e gera mmd e svg"]
+n62 --> n63
+n64{"For: dirpath _ filenames in oswalk"}
+n63 --> n64
+n65{"For: filename in filenames"}
+n64 --> n65
+n66{"If: filenameendswithpy"}
 n65 --> n66
+n67["full_path = ospathjoindirpath filename"]
+n66 --> n67
+n68["mmd_path = ospathjoindirpath fospathsplitextfilename0mmd"]
+n66 --> n68
+n69["svg_path = ospathjoindirpath fospathsplitextfilename0svg"]
+n66 --> n69
+n70["printf mmd_path gerado"]
+n66 --> n70
+n71{"If: __name__ == __main__"}
+n72["process_all_py_files"]
+n71 --> n72
