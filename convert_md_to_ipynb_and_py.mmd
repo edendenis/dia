@@ -1,0 +1,34 @@
+graph TD
+N0["Func: convert_md_to_ipynb()"]
+N1["Converte um arquivo Markdown (.md) para Jupyter Notebook (.ipynb). Args: md_file (str): Caminho para o arquivo Markdown."]
+N0 --> N1
+N2["notebook = nbformat.v4.new_notebook()"]
+N0 --> N2
+N3["notebook.cells.append(nbformat.v4.new_markdown_cell(md_content))"]
+N0 --> N3
+N4["ipynb_file = md_file.replace('.md', '.ipynb')"]
+N0 --> N4
+N5["Func: convert_ipynb_to_py()"]
+N6["Converte um arquivo Jupyter Notebook (.ipynb) para Python Script (.py). Args: ipynb_file (str): Caminho para o arquivo Jupyter Notebook."]
+N5 --> N6
+N7["python_exporter = PythonExporter()"]
+N5 --> N7
+N8["python_code, _ = python_exporter.from_notebook_node(notebook)"]
+N5 --> N8
+N9["py_file = ipynb_file.replace('.ipynb', '.py')"]
+N5 --> N9
+N10["excluded_file = 'convert_md_to_ipynb.py'"]
+N11["root_path = os.path.abspath('.')"]
+N12["For: (dirpath, dirnames, filenames) in os.walk('.')"]
+N13["For: filename in filenames"]
+N12 --> N13
+N14["full_path = os.path.join(dirpath, filename)"]
+N13 --> N14
+N15["If: filename.endswith('.md')"]
+N13 --> N15
+N16["If: (filename == excluded_file and os.path.abspath(dirpath) != root_path)"]
+N15 --> N16
+N17["os.remove(full_path)"]
+N16 --> N17
+N18["print(f'Arquivo excluído: full_path')"]
+N16 --> N18

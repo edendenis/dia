@@ -1,0 +1,21 @@
+graph TD
+N0["Func: find_files_with_keyword()"]
+N1["Percorre os arquivos .py de um diretório e retorna uma lista dos arquivos que contêm a palavra-chave especificada. :param directory: Caminho do diretório a ser percorrido. :type directory: str :param keyword: Palavra-chave a ser procurada nos arquivos. :type keyword: str :return: Lista de caminhos dos arquivos que contêm a palavra-chave. :rtype: list"]
+N0 --> N1
+N2["matching_files ="]
+N0 --> N2
+N3["For: (root, _, files) in os.walk(directory)"]
+N0 --> N3
+N4["For: file in files"]
+N3 --> N4
+N5["If: file.endswith('.py')"]
+N4 --> N5
+N6["file_path = os.path.join(root, file)"]
+N5 --> N6
+N7["project_root_directory = os.path.dirname(os.path.abspath(__file__))"]
+N8["keyword_to_find = input('Please enter the keyword to search for: ')"]
+N9["files_found = find_files_with_keyword(project_root_directory, keyword_to_find)"]
+N10["print(f'Files containing the word keyword_to_find:')"]
+N11["For: file in files_found"]
+N12["print(f'file://file')"]
+N11 --> N12

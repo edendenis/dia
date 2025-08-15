@@ -1,0 +1,8 @@
+graph TD
+N0["nb = json.load(sys.stdin)"]
+N1["For: cell in nb'cells'"]
+N2["If: ('metadata' in cell)"]
+N1 --> N2
+N3["cell'metadata' = k: v for k, v in cell'metadata'.items() if k != 'jp-MarkdownHeadingCollapsed'"]
+N2 --> N3
+N4["json.dump(nb, sys.stdout, sort_keys=True, indent=1, ensure_ascii=False)"]
