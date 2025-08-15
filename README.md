@@ -1,22 +1,24 @@
-# Como configurar/instalar/usar o `dia` no `Linux Ubuntu`
+# Como configurar/instalar/usar o `mermaid` no `Linux Ubuntu`
 
 ## Resumo
 
-Neste documento estão contidos os principais comandos e configurações para configurar/instalar/usar o `dia` no `Linux Ubuntu`.
+Neste documento estão contidos os principais comandos e configurações para configurar/instalar/usar o `mermaid` no `Linux Ubuntu`.
 
 ## _Abstract_
 
-_In this document are contained the main commands and settings to set up/install/use the `dia` on `Linux Ubuntu`._
+_In this document are contained the main commands and settings to set up/install/use the `mermaid` on `Linux Ubuntu`._
+
 
 ## Descrição [2]
 
-### `dia`
+### `mermaid`
 
-O `Dia` é um _software_ de código aberto de gerenciamento de calendário e agenda que oferece uma maneira eficaz de organizar compromissos, eventos, tarefas e lembretes em sistemas operacionais `Unix-like`, incluindo `Linux`. Com uma interface de usuário simples e intuitiva, o Dia permite que os usuários criem e visualizem calendários personalizados, adicionem eventos recorrentes ou únicos, definam prioridades e categorias para tarefas e mantenham um controle organizado de suas atividades diárias. Além disso, o Dia suporta a exportação de calendários em diversos formatos, facilitando a sincronização com outras ferramentas de gerenciamento de tempo e dispositivos. É uma escolha popular para quem busca uma solução leve e funcional de calendário para suas necessidades pessoais ou de trabalho.
+O `mermaid` é uma ferramenta de criação de diagramas e gráficos a partir de texto simples. Integrado com diversas plataformas e editores, como o Visual Studio Code e o GitHub, ele permite gerar visualizações como diagramas de fluxo, gráficos de Gantt e diagramas de sequência usando uma linguagem de marcação fácil de aprender. O `mermaid` é especialmente útil para desenvolvedores e analistas que desejam incluir diagramas e documentação técnica de forma eficiente e programática em suas documentações e projetos de código. Ele proporciona uma maneira ágil de criar representações visuais complexas sem a necessidade de _software_ gráfico avançado.
+
 
 ## 1. Como configurar/instalar/usar o `dia` no `Linux Ubuntu` [1][3]
 
-Para configurar/instalar/usar o `dia` no `Linux Ubuntu`, você pode seguir estes passos:
+Para configurar/instalar/usar o `mermaid` no `Linux Ubuntu`, você pode seguir estes passos:
 
 1. Abra o `Terminal Emulator`. Você pode fazer isso pressionando: `Ctrl + Alt + T`    
 
@@ -39,11 +41,19 @@ Para configurar/instalar/usar o `dia` no `Linux Ubuntu`, você pode seguir estes
     2.8 Realmente atualizar os pacotes instalados para as suas versões mais recentes, com base na última vez que você executou `sudo apt update`. Digite o seguinte comando e pressione `Enter`: `sudo apt full-upgrade -y`
     
 
-1. **Instale o `DIA`:** Uma vez que os pacotes estejam atualizados, você pode instalar o `DIA` usando o gerenciador de pacotes apt. No terminal, digite: `sudo apt install dia -y`
+Para instalar o `mermaid` no `Linux Ubuntu` pelo `Terminal Emulator`, você pode seguir estas etapas:
 
-2. **Confirmação e Uso:** Após a conclusão da instalação, você pode iniciar o `DIA` através do terminal com o comando `dia` ou encontrá-lo no menu de aplicações do seu `Linux Ubuntu`.
+1. **Instalar o `Node.js` e o `npm`**: O `mermaid` é uma ferramenta baseada em `JavaScript`, e é instalado via `npm`, que faz parte do `Node.js`. Primeiramente, atualize a lista de pacotes e instale o `Node.js` e o `npm`: `sudo apt install nodejs npm`
 
-Lembre-se de que, dependendo da sua versão do `Linux Ubuntu` e das configurações do sistema, esses passos podem variar um pouco. Se você encontrar problemas durante a instalação, verifique se o `DIA` é compatível com a sua versão do `Linux Ubuntu`.
+2. **Instalar o `mermaid`**: Agora, com o `npm` instalado, você pode instalar o `mermaid-cli` (a ferramenta de linha de comando do mermaid) utilizando o seguinte comando: `sudo npm install -g @mermaid-js/mermaid-cli`
+
+    O argumento `-g` significa que ele será instalado globalmente, para que você possa usar o `mermaid` em qualquer lugar do sistema.
+
+3. Verificar a instalação: Após a instalação, você pode verificar se o `mermaid-cli` foi instalado corretamente executando: `mmdc -h`
+
+    Isso deve exibir a ajuda da ferramenta `mermaid-cli`, confirmando que a instalação foi bem-sucedida.
+
+Agora você está pronto para gerar diagramas usando o `mermaid` via linha de comando no seu sistema `Linux Ubuntu`.
 
 
 ### 1.1 Código completo para configurar/instalar/usar
@@ -63,35 +73,15 @@ Para configurar/instalar/usar o `dia` no `Linux Ubuntu` sem precisar digitar lin
     sudo apt clean
     sudo apt list --upgradable
     sudo apt full-upgrade -y
-    sudo apt install dia -y
-    dia
+    sudo apt install nodejs npm
+    sudo npm install -g @mermaid-js/mermaid-cli
+    mmdc -h
     ```
-
-
-## 2. Código Red, Green e Blue (RGB) das cores
-
-Segue as 10 cores mais claras com seus códigos RGB, ideais para uso em gráficos BPMN, para que o diagrama não fique muito escuro:
-
-| Cor                | Red | Green | Blue |
-|--------------------|-----|-------|------|
-| **Azul Claro**     | 173 | 216   | 230  |
-| **Verde Claro**    | 144 | 238   | 144  |
-| **Rosa Claro**     | 255 | 182   | 193  |
-| **Amarelo Claro**  | 255 | 255   | 224  |
-| **Laranja Claro**  | 255 | 228   | 181  |
-| **Lavanda (Roxo Claro)** | 230 | 230 | 250  |
-| **Ciano Claro**    | 224 | 255   | 255  |
-| **Verde Menta**    | 189 | 252   | 201  |
-| **Pêssego**        | 255 | 218   | 185  |
-| **Coral Claro**    | 240 | 128   | 128  |
-
-Essas cores são mais suaves e garantirão que seu gráfico tenha uma aparência leve e agradável, evitando que fique muito escuro ou pesado.
 
 
 ## Referências
 
-[1] OPENAI. ***Instale o programa dia no ubuntu.*** Disponível em: <https://chat.openai.com/c/d9a2f2cc-d4a0-47cd-97d8-c7bf452a833c> (texto adaptado). ChatGPT. Acessado em: 29/12/2023 10:01.
+[1] OPENAI. ***Instale o programa dia no ubuntu.*** Disponível em: <https://chatgpt.com/c/66e36f58-9048-8002-bd67-d2e746e319b6> (texto adaptado). ChatGPT. Acessado em: 12/09/2024 22:22.
 
-[2] OPENAI. ***Vs code: editor popular.*** Disponível em: <https://chat.openai.com/c/b640a25d-f8e3-4922-8a3b-ed74a2657e42> (texto adaptado). ChatGPT. Acessado em: 29/12/2023 10:01.
+[2] OPENAI. ***Vs code: editor popular.*** Disponível em: <https://chat.openai.com/c/b640a25d-f8e3-4922-8a3b-ed74a2657e42> (texto adaptado). ChatGPT. Acessado em: 12/09/2024 22:22.
 
-[3] OPENAI. ***Comandos de manutenção do ubuntu.*** Disponível em: <https://chat.openai.com/c/4a8cfaa2-30d6-474d-821f-7047a6a39830> (texto adaptado). ChatGPT. Acessado em: 29/12/2023 10:01.
